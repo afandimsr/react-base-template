@@ -1,0 +1,54 @@
+import React from 'react';
+import { useRoutes, Navigate } from 'react-router-dom';
+import { DashboardLayout } from '../presentation/layouts/DashboardLayout';
+import { DashboardPage } from '../presentation/pages/dashboard';
+import { AuthLayout } from '../presentation/layouts/AuthLayout';
+import { LoginPage } from '../presentation/pages/auth/LoginPage';
+// import LoginPageNew from '../presentation/pages/auth/LoginPageNew';
+import { ProtectedRoute } from '../presentation/components/auth/ProtectedRoute';
+import { GuestRoute } from '../presentation/components/auth/GuestRoute';
+
+import { UserListPage } from '../presentation/pages/users';
+import { ProfilePage } from '../presentation/pages/profile/ProfilePage';
+import { NotificationPage } from '../presentation/pages/notifications/NotificationPage';
+import { DebugAuthPage } from '../presentation/pages/debug/AuthDebug';
+
+export const AppRoutes: React.FC = () => {
+    const element = useRoutes([
+        {
+            element: <GuestRoute />, // Prevent authenticated users from login
+            children: [
+                {
+                    path: '/login',
+                    element: <AuthLayout />,
+                    children: [
+                        { index: true, element: <LoginPage /> }
+                    ]
+                },
+            ]
+        },
+        {
+            path: '/debug',
+            element: <DebugAuthPage />
+        },
+        {
+            path: '/',
+            element: <ProtectedRoute />, // Protect these routes
+            children: [
+                {
+                    element: <DashboardLayout />,
+                    children: [
+                        { index: true, element: <Navigate to="/dashboard" replace /> },
+                        { path: 'dashboard', element: <DashboardPage /> },
+                        { path: 'users', element: <UserListPage /> },
+                        { path: 'profile', element: <ProfilePage /> },
+                        { path: 'settings/notifications', element: <NotificationPage /> },
+                    ],
+                }
+            ]
+        },
+        { path: '*', element: <Navigate to="/login" replace /> }
+    ]);
+
+    return element;
+};

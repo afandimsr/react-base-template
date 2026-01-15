@@ -22,7 +22,8 @@ export const menuItems: NavItem[] = [
     {
         text: 'Users',
         icon: <PeopleIcon />,
-        path: '/users'
+        path: '/dashboard/users',
+        roles: ['ADMIN']
     },
     {
         text: 'Settings',
@@ -31,12 +32,12 @@ export const menuItems: NavItem[] = [
             {
                 text: 'Profile',
                 icon: <PersonIcon />,
-                path: '/profile'
+                path: '/dashboard/profile'
             },
             {
                 text: 'Notifications',
                 icon: <NotificationsIcon />,
-                path: '/settings/notifications'
+                path: '/dashboard/settings/notifications'
             }
         ]
     }

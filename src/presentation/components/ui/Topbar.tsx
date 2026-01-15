@@ -140,10 +140,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                         mr: 1
                     }}>
                         <Typography variant="body2" sx={{ fontWeight: 700, lineHeight: 1 }}>
-                            {user?.username}
+                            {user?.name || 'User'}
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-                            {user?.role === 'ADMIN' ? 'Administrator' : 'User'}
+                            {user?.roles?.includes('ADMIN') ? 'Administrator' : 'User'}
                         </Typography>
                     </Box>
                     <Tooltip title="Account settings">
@@ -166,7 +166,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                                 fontWeight: 600,
                                 boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.primary.main, 0.3)}`
                             }}>
-                                {user?.username?.charAt(0).toUpperCase() || 'U'}
+                                {user?.name?.charAt(0).toUpperCase() || 'U'}
                             </Avatar>
                         </IconButton>
                     </Tooltip>

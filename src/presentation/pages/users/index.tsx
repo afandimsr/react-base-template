@@ -11,6 +11,8 @@ import {
     Chip,
     Typography,
     alpha,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import { useUserStore } from '../../../state/userStore';
 import { UserFormDialog } from './UserFormDialog';
@@ -28,6 +30,8 @@ export const UserListPage: React.FC = () => {
     const [openConfirm, setOpenConfirm] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [snack, setSnack] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' | 'warning' }>({ open: false, message: '', severity: 'success' });
+
 
     useEffect(() => {
         fetchUsers();
@@ -35,8 +39,8 @@ export const UserListPage: React.FC = () => {
 
     const filteredUsers = useMemo(() => {
         return users.filter(user =>
-            user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase())
+            user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [users, searchQuery]);
 
@@ -56,19 +60,32 @@ export const UserListPage: React.FC = () => {
     };
 
     const handleSave = async (data: any) => {
-        if (selectedUser) {
-            await editUser(selectedUser.id, data);
-        } else {
-            await addUser(data);
+        try { 
+            if (selectedUser) {
+                await editUser(selectedUser.id, data);
+                 setSnack({ open: true, message: 'User updated successfully', severity: 'success' });
+            } else {
+                await addUser(data);
+                setSnack({ open: true, message: 'User created successfully', severity: 'success' });
+            }
+            setOpenForm(false);
+        } catch (error) {
+            setSnack({ open: true, message: 'Error saving user', severity: 'error' });
         }
-        setOpenForm(false);
     };
 
     const handleConfirmDelete = async () => {
-        if (selectedUser) {
-            await removeUser(selectedUser.id);
+       try {
+            if (selectedUser) {
+                await removeUser(selectedUser.id);
+                setSnack({ open: true, message: 'User deleted', severity: 'success' });
+            }
+        } catch (err: any) {
+            setSnack({ open: true, message: err?.message || 'Failed to delete user', severity: 'error' });
+            throw err;
+        } finally {
+            setOpenConfirm(false);
         }
-        setOpenConfirm(false);
     };
 
     if (isLoading && users.length === 0) {
@@ -105,7 +122,7 @@ export const UserListPage: React.FC = () => {
                 <Table sx={{ minWidth: 650 }}>
                     <TableHead sx={{ bgcolor: (theme) => alpha(theme.palette.action.hover, 0.5) }}>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: 600 }}>Username</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Full Name</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Email Address</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Role</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
@@ -123,16 +140,16 @@ export const UserListPage: React.FC = () => {
                             >
                                 <TableCell>
                                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                        {user.username}
+                                        {user.name}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={user.role}
-                                        color={user.role === 'ADMIN' ? 'primary' : 'default'}
+                                        label={user.roles?.includes('ADMIN') ? 'Admin' : 'User'}
+                                        color={user.roles?.includes('ADMIN') ? 'primary' : 'default'}
                                         size="small"
-                                        variant={user.role === 'ADMIN' ? 'filled' : 'outlined'}
+                                        variant={user.roles?.includes('ADMIN') ? 'filled' : 'outlined'}
                                         sx={{ borderRadius: 1.5, fontSize: '0.75rem', fontWeight: 600 }}
                                     />
                                 </TableCell>
@@ -180,10 +197,16 @@ export const UserListPage: React.FC = () => {
                 onSave={handleSave}
             />
 
+            <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })}>
+                <Alert onClose={() => setSnack({ ...snack, open: false })} severity={snack.severity} sx={{ width: '100%' }}>
+                    {snack.message}
+                </Alert>
+            </Snackbar>
+
             <ConfirmDialog
                 open={openConfirm}
                 title="Delete User"
-                message={`Are you sure you want to delete account "${selectedUser?.username}"? This action cannot be undone.`}
+                message={`Are you sure you want to delete account "${selectedUser?.name}"? This action cannot be undone.`}
                 onConfirm={handleConfirmDelete}
                 onCancel={() => setOpenConfirm(false)}
             />

@@ -1,5 +1,5 @@
-import type { IUserRepository } from '../../domain/repositories/UserRepository';
-import type { User } from '../../domain/entities/User';
+import type { IUserRepository } from '../../../domain/repositories/UserRepository';
+import type { UserDTO } from '../GetUsersUseCase/types/UserDTO';
 
 export class GetUsersUseCase {
     private userRepository: IUserRepository;
@@ -8,7 +8,7 @@ export class GetUsersUseCase {
         this.userRepository = userRepository;
     }
 
-    async execute(): Promise<User[]> {
+    async execute(): Promise<UserDTO[]> {
         return this.userRepository.getUsers();
     }
 }

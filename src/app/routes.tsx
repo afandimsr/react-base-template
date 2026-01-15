@@ -7,6 +7,7 @@ import { LoginPage } from '../presentation/pages/auth/LoginPage';
 // import LoginPageNew from '../presentation/pages/auth/LoginPageNew';
 import { ProtectedRoute } from '../presentation/components/auth/ProtectedRoute';
 import { GuestRoute } from '../presentation/components/auth/GuestRoute';
+import { AdminRoute } from '../presentation/components/auth/AdminRoute';
 
 import { UserListPage } from '../presentation/pages/users';
 import { ProfilePage } from '../presentation/pages/profile/ProfilePage';
@@ -36,11 +37,17 @@ export const AppRoutes: React.FC = () => {
             element: <ProtectedRoute />, // Protect these routes
             children: [
                 {
+                    path: 'dashboard',
                     element: <DashboardLayout />,
                     children: [
-                        { index: true, element: <Navigate to="/dashboard" replace /> },
-                        { path: 'dashboard', element: <DashboardPage /> },
-                        { path: 'users', element: <UserListPage /> },
+                        { index: true, element: <DashboardPage /> },
+                        {
+                            path: 'users',
+                            element: <AdminRoute />,
+                            children: [
+                                { index: true, element: <UserListPage /> }
+                            ]
+                        },
                         { path: 'profile', element: <ProfilePage /> },
                         { path: 'settings/notifications', element: <NotificationPage /> },
                     ],

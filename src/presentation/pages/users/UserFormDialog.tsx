@@ -29,25 +29,28 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
     onSave,
 }) => {
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
-        role: 'USER' as 'ADMIN' | 'USER',
+        password: '',
+        roles: [] as string[],
         isActive: true,
     });
 
     useEffect(() => {
         if (user) {
             setFormData({
-                username: user.username,
+                name: user.name,
                 email: user.email,
-                role: user.role,
+                password : '',
+                roles: user.roles || [],
                 isActive: user.isActive,
             });
         } else {
             setFormData({
-                username: '',
+                name: '',
                 email: '',
-                role: 'USER',
+                password : '',
+                roles: [],
                 isActive: true,
             });
         }
@@ -65,10 +68,10 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 <DialogContent dividers>
                     <TextField
                         fullWidth
-                        label="Username"
+                        label="Full Name"
                         margin="normal"
-                        value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
                     />
                     <TextField
@@ -80,12 +83,13 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         required
                     />
+
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Role</InputLabel>
                         <Select
-                            value={formData.role}
+                            value={formData.roles[0] || ''}
                             label="Role"
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value as 'ADMIN' | 'USER' })}
+                            onChange={(e) => setFormData({ ...formData, roles: [e.target.value] })}
                         >
                             <MenuItem value="ADMIN">Admin</MenuItem>
                             <MenuItem value="USER">User</MenuItem>
@@ -101,6 +105,12 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                         label="Active Status"
                         sx={{ mt: 2 }}
                     />
+
+                     {!user && (
+                        <div style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
+                            Password will be auto-generated from email (e.g., user@example.com → user123)
+                        </div>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} color="inherit">

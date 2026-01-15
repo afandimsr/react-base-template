@@ -125,7 +125,7 @@ export const ProfilePage: React.FC = () => {
                             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
                         }}
                     >
-                        {user?.username?.charAt(0).toUpperCase()}
+                        {user?.name?.charAt(0).toUpperCase()}
                     </Avatar>
                     <Box sx={{ mb: { xs: 0, sm: 6 }, flexGrow: 1 }}>
                         <Typography variant="h4" sx={{
@@ -135,7 +135,7 @@ export const ProfilePage: React.FC = () => {
                             letterSpacing: '-0.02em',
                             fontSize: { xs: '1.75rem', sm: '2.125rem' }
                         }}>
-                            {user?.username}
+                            {user?.name}
                         </Typography>
                         <Stack
                             direction={{ xs: 'column', sm: 'row' }}
@@ -144,7 +144,7 @@ export const ProfilePage: React.FC = () => {
                             sx={{ mt: 0.5 }}
                         >
                             <Typography variant="subtitle1" sx={{ color: { xs: 'text.secondary', sm: 'rgba(255,255,255,0.8)' }, fontWeight: 500 }}>
-                                {user?.role === 'ADMIN' ? 'Administrator' : 'Team Member'}
+                                {user?.roles?.includes('ADMIN') ? 'Administrator' : 'Team Member'}
                             </Typography>
                             <Box sx={{
                                 width: 4,
@@ -187,7 +187,7 @@ export const ProfilePage: React.FC = () => {
                             <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
                                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>About Me</Typography>
                                 <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                                    Welcome to your profile. Here you can manage your personal information, security settings, and notification preferences. As an {user?.role.toLowerCase()}, you have access to various system features tailored to your role.
+                                    Welcome to your profile. Here you can manage your personal information, security settings, and notification preferences. As an {user?.roles?.includes('ADMIN') ? 'Administrator' : 'Team Member'}, you have access to various system features tailored to your role.
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -197,9 +197,9 @@ export const ProfilePage: React.FC = () => {
                                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>General Information</Typography>
                                 <Grid container spacing={3}>
                                     {[
-                                        { label: 'Full Name', value: user?.username, icon: <BadgeIcon color="primary" /> },
+                                        { label: 'Full Name', value: user?.name, icon: <BadgeIcon color="primary" /> },
                                         { label: 'Email Address', value: user?.email, icon: <EmailIcon color="primary" /> },
-                                        { label: 'Role', value: user?.role, icon: <SecurityIcon color="primary" /> },
+                                        { label: 'Role', value: user?.roles?.includes('ADMIN') ? 'Administrator' : 'Team Member', icon: <SecurityIcon color="primary" /> },
                                         { label: 'Member Since', value: 'January 2026', icon: <CalendarMonthIcon color="primary" /> },
                                     ].map((info, idx) => (
                                         <Grid size={{ xs: 12, sm: 6 }} key={idx}>
@@ -249,14 +249,6 @@ export const ProfilePage: React.FC = () => {
                                         </Box>
                                     </Box>
                                     <Divider />
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Typography variant="body2" color="text.secondary">Storage used</Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>45% of 10GB</Typography>
-                                    </Box>
-                                    <Divider />
-                                    <Button variant="outlined" fullWidth sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>
-                                        Upgrade Plan
-                                    </Button>
                                 </Stack>
                             </CardContent>
                         </Card>

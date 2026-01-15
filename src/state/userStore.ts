@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import type { User } from '../domain/entities/User';
 import { UserRepositoryImpl } from '../infrastructure/api/user.api';
-import { GetUsersUseCase } from '../application/user/GetUsersUseCase';
-import { CreateUserUseCase } from '../application/user/CreateUserUseCase';
+import { GetUsersUseCase } from '../application/user/GetUsersUseCase/GetUsersUseCase';
+import { CreateUserUseCase } from '../application/user/Create/CreateUserUseCase';
 import { UpdateUserUseCase } from '../application/user/UpdateUserUseCase';
 import { DeleteUserUseCase } from '../application/user/DeleteUserUseCase';
 
@@ -32,7 +32,17 @@ export const useUserStore = create<UserState>((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const users = await getUsersUseCase.execute();
-            set({ users, isLoading: false });
+
+            // mapper from UserDTO to User if needed
+            const mappedUsers = users.map(user => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                roles: user.roles,
+                isActive: user.is_active
+            }));
+
+            set({ users: mappedUsers, isLoading: false });
         } catch (err: any) {
             set({ error: err.message, isLoading: false });
         }

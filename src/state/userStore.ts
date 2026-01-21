@@ -5,6 +5,7 @@ import { GetUsersUseCase } from '../application/user/GetUsersUseCase/GetUsersUse
 import { CreateUserUseCase } from '../application/user/Create/CreateUserUseCase';
 import { UpdateUserUseCase } from '../application/user/UpdateUserUseCase';
 import { DeleteUserUseCase } from '../application/user/DeleteUserUseCase';
+import { ChangePasswordUseCase } from '../application/user/ChangePassword/ChangePasswordUseCase';
 
 interface UserState {
     users: User[];
@@ -14,6 +15,7 @@ interface UserState {
     addUser: (user: Omit<User, 'id'>) => Promise<void>;
     editUser: (id: string, user: Partial<User>) => Promise<void>;
     removeUser: (id: string) => Promise<void>;
+    changePassword: (id: string, password: string, passwordConfirmation: string) => Promise<void>;
 }
 
 // Dependency Injection
@@ -22,6 +24,7 @@ const getUsersUseCase = new GetUsersUseCase(userRepo);
 const createUserUseCase = new CreateUserUseCase(userRepo);
 const updateUserUseCase = new UpdateUserUseCase(userRepo);
 const deleteUserUseCase = new DeleteUserUseCase(userRepo);
+const changePasswordUseCase = new ChangePasswordUseCase(userRepo);
 
 export const useUserStore = create<UserState>((set, get) => ({
     users: [],
@@ -78,6 +81,21 @@ export const useUserStore = create<UserState>((set, get) => ({
         } catch (err: any) {
             set({ error: err.message, isLoading: false });
             throw err;
+        }
+    },
+
+    changePassword: async (id, password, passwordConfirmation) => {
+        set({ isLoading: true, error: null });
+        try {
+            await changePasswordUseCase.execute(id, {
+                new_password: password,
+                confirm_password: passwordConfirmation
+            });
+        } catch (err: any) {
+            set({ error: err.message, isLoading: false });
+            throw err;
+        } finally {
+            set({ isLoading: false });
         }
     },
 }));

@@ -3,6 +3,18 @@ import { tokenStorage } from './storage/tokenStorage';
 
 const BASE_URL = config.API_URL || 'http://localhost:8080/api/v1';
 
+export class ApiError extends Error {
+    public status: number;
+    public data?: any;
+
+    constructor(message: string, status: number, data?: any) {
+        super(message);
+        this.status = status;
+        this.data = data;
+        this.name = 'ApiError';
+    }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const token = tokenStorage.getToken();
     const headers = new Headers(options.headers);
@@ -23,10 +35,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong');
+        throw new ApiError(data.message || 'Something went wrong', response.status, data);
     }
 
-    return data.data; // Assuming backend returns { success: true, message: "...", data: ... }
+    return data.data;
 }
 
 export const apiClient = {

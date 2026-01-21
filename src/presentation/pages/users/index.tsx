@@ -23,14 +23,16 @@ import type { User } from '../../../domain/entities/User';
 import { UserTableHeader } from './components/UserTableHeader';
 import { UserTableActions } from './components/UserTableActions';
 import { UserTableSkeleton } from './components/UserTableSkeleton';
+import { ChangePasswordDialog } from './components/ChangePasswordDialog';
 
 export const UserListPage: React.FC = () => {
-    const { users, isLoading, fetchUsers, addUser, editUser, removeUser } = useUserStore();
+    const { users, isLoading, fetchUsers, addUser, editUser, removeUser, changePassword } = useUserStore();
     const [openForm, setOpenForm] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [snack, setSnack] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' | 'warning' }>({ open: false, message: '', severity: 'success' });
+    const [openChangePassword, setOpenChangePassword] = useState(false);
 
 
     useEffect(() => {
@@ -59,11 +61,16 @@ export const UserListPage: React.FC = () => {
         setOpenConfirm(true);
     };
 
+    const handleChangePassword = (user: User) => {
+        setSelectedUser(user);
+        setOpenChangePassword(true);
+    };
+
     const handleSave = async (data: any) => {
-        try { 
+        try {
             if (selectedUser) {
                 await editUser(selectedUser.id, data);
-                 setSnack({ open: true, message: 'User updated successfully', severity: 'success' });
+                setSnack({ open: true, message: 'User updated successfully', severity: 'success' });
             } else {
                 await addUser(data);
                 setSnack({ open: true, message: 'User created successfully', severity: 'success' });
@@ -75,7 +82,7 @@ export const UserListPage: React.FC = () => {
     };
 
     const handleConfirmDelete = async () => {
-       try {
+        try {
             if (selectedUser) {
                 await removeUser(selectedUser.id);
                 setSnack({ open: true, message: 'User deleted', severity: 'success' });
@@ -85,6 +92,19 @@ export const UserListPage: React.FC = () => {
             throw err;
         } finally {
             setOpenConfirm(false);
+        }
+    };
+
+    const handleConfirmChangePassword = async (password: string, confirmation: string) => {
+        try {
+            if (selectedUser) {
+                await changePassword(selectedUser.id, password, confirmation);
+                setSnack({ open: true, message: 'Password changed successfully', severity: 'success' });
+                setOpenChangePassword(false);
+            }
+        } catch (err: any) {
+            setSnack({ open: true, message: err?.message || 'Failed to change password', severity: 'error' });
+            throw err;
         }
     };
 
@@ -173,6 +193,7 @@ export const UserListPage: React.FC = () => {
                                         user={user}
                                         onEdit={handleEdit}
                                         onDelete={handleDelete}
+                                        onChangePassword={handleChangePassword}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -195,6 +216,13 @@ export const UserListPage: React.FC = () => {
                 user={selectedUser}
                 onClose={() => setOpenForm(false)}
                 onSave={handleSave}
+            />
+
+            <ChangePasswordDialog
+                open={openChangePassword}
+                user={selectedUser}
+                onClose={() => setOpenChangePassword(false)}
+                onConfirm={handleConfirmChangePassword}
             />
 
             <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })}>

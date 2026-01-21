@@ -4,6 +4,7 @@ import type { User } from '../../domain/entities/User';
 import type { UserDTO } from '../../application/user/GetUsersUseCase/types/UserDTO';
 import { apiClient } from '../apiClient';
 import type { CreateUserRequest } from '../../application/user/Create/CreateUserRequest';
+import type { ChangePasswordRequest } from '../../application/user/ChangePassword/ChangePasswordRequest';
 
 // MOCK DATA
 // const MOCK_USERS: User[] = [
@@ -13,7 +14,7 @@ import type { CreateUserRequest } from '../../application/user/Create/CreateUser
 // ];
 
 export class UserRepositoryImpl implements IUserRepository {
-    
+
     // MOCK DATA STORAGE
     // private users: User[] = [...MOCK_USERS];
 
@@ -25,7 +26,7 @@ export class UserRepositoryImpl implements IUserRepository {
 
         const response = await apiClient.get<UserDTO[]>('/users');
         return response;
-        
+
     }
 
     async createUser(userData: Omit<CreateUserRequest, 'id'>): Promise<User> {
@@ -67,7 +68,7 @@ export class UserRepositoryImpl implements IUserRepository {
             const message = error instanceof Error ? error.message : String(error);
             throw new Error(`Failed to update user: ${message}`);
         }
-        
+
     }
 
     async deleteUser(id: string): Promise<void> {
@@ -82,6 +83,18 @@ export class UserRepositoryImpl implements IUserRepository {
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
             throw new Error(`Failed to delete user: ${message}`);
+        }
+    }
+
+    async changePassword(id: string, request: ChangePasswordRequest): Promise<void> {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // REAL IMPLEMENTATION
+        try {
+            await apiClient.put(`/users/${id}/change-password`, request);
+        } catch (error: unknown) {
+            if (error instanceof Error) throw error;
+            throw new Error(`Failed to change password: ${String(error)}`);
         }
     }
 }

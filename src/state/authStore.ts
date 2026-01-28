@@ -62,6 +62,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout: () => {
         authRepository.logout();
         set({ user: null, token: null, isAuthenticated: false });
+        // Redirect to backend logout to clear Keycloak SSO session
+        window.location.href = `${import.meta.env.VITE_API_URL}/logout`;
     },
 }));
 

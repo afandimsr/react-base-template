@@ -1,5 +1,6 @@
 import { config } from '../app/config';
 import { tokenStorage } from './storage/tokenStorage';
+import { useAuthStore } from '../state/authStore';
 
 const BASE_URL = config.API_URL || 'http://localhost:8080/api/v1';
 
@@ -31,6 +32,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         ...options,
         headers,
     });
+
+    // Handle 401 Unauthorized globally
+    if (response.status === 401) {
+        useAuthStore.getState().logout();
+        throw new Error('Session expired. Please login again.');
+    }
 
     const data = await response.json();
 

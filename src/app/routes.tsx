@@ -4,6 +4,7 @@ import { DashboardLayout } from '../presentation/layouts/DashboardLayout';
 import { DashboardPage } from '../presentation/pages/dashboard';
 import { AuthLayout } from '../presentation/layouts/AuthLayout';
 import { LoginPage } from '../presentation/pages/auth/LoginPage';
+import { AuthCallbackPage } from '../presentation/pages/auth/AuthCallbackPage';
 // import LoginPageNew from '../presentation/pages/auth/LoginPageNew';
 import { ProtectedRoute } from '../presentation/components/auth/ProtectedRoute';
 import { GuestRoute } from '../presentation/components/auth/GuestRoute';
@@ -16,6 +17,10 @@ import { DebugAuthPage } from '../presentation/pages/debug/AuthDebug';
 
 export const AppRoutes: React.FC = () => {
     const element = useRoutes([
+        {
+            path: '/',
+            element: <Navigate to="/dashboard" replace />
+        },
         {
             element: <GuestRoute />, // Prevent authenticated users from login
             children: [
@@ -53,6 +58,10 @@ export const AppRoutes: React.FC = () => {
                     ],
                 }
             ]
+        },
+        {
+            path: '/auth/callback',
+            element: <AuthCallbackPage />
         },
         { path: '*', element: <Navigate to="/login" replace /> }
     ]);

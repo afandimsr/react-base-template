@@ -176,9 +176,31 @@ export const LoginPage: React.FC = () => {
                     </Button>
                 </Box>
 
-                {/* <Divider sx={{ my: 1 }}>
+                <Box sx={{ my: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
                     <Typography variant="body2" color="text.secondary">or</Typography>
-                </Divider> */}
+                    <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
+                </Box>
+
+                <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/login`}
+                    sx={{
+                        py: 1.2,
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        borderColor: alpha('#000', 0.1),
+                        '&:hover': {
+                            backgroundColor: alpha('#000', 0.05),
+                            borderColor: alpha('#000', 0.2),
+                        }
+                    }}
+                >
+                    Sign in with Keycloak
+                </Button>
 
                 {/* <Stack spacing={2}>
                     <Button

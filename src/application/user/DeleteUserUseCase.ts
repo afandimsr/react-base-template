@@ -1,9 +1,9 @@
-import type { UserRepository } from '../../domain/repositories/UserRepository';
+import type { IUserRepository } from '../../domain/repositories/UserRepository';
 
 export class DeleteUserUseCase {
-    private userRepository: UserRepository;
+    private userRepository: IUserRepository;
 
-    constructor(userRepository: UserRepository) {
+    constructor(userRepository: IUserRepository) {
         this.userRepository = userRepository;
     }
 

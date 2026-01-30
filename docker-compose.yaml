@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # --- Service Frontend ---
+  react-template-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Masukkan nilai ENV ke dalam proses Build Docker
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_APP_TITLE: ${VITE_APP_TITLE}
+    container_name: react-template-frontend
+    ports:
+      - "3001:80"
+    # Kita load file .env frontend agar docker-compose bisa membaca valuenya
+    # untuk dimasukkan ke variabel ${VITE_...} di atas
+    env_file:
+      - .env
+    networks:
+      - my_develop_network
+    restart: always
+
+# ... (Definisi networks sama seperti sebelumnya)
+networks:
+  my_develop_network:
+    external: true

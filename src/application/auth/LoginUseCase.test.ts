@@ -8,7 +8,7 @@ describe('LoginUseCase', () => {
 
     it('should login successfully with valid credentials', async () => {
         const { user, token } = await loginUseCase.execute('admin', 'admin');
-        expect(user.username).toBe('admin');
+        expect(user.name).toBe('admin');
         expect(token).toBeDefined();
     });
 
